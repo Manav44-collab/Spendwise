@@ -1,0 +1,111 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}SpendWise{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'expenses/style.css' %}">
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<aside class="sidebar">
+
+    <!-- Brand -->
+    <a class="brand" href="{% url 'dashboard' %}">
+        <span class="brand-mark">S</span>
+        <span>
+            <b>SpendWise</b>
+            <small>PERSONAL FINANCE</small>
+        </span>
+    </a>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="{% url 'dashboard' %}">
+            ▦ <span>Dashboard</span>
+        </a>
+        <a href="{% url 'transactions' %}">
+            ↕ <span>Transactions</span>
+        </a>
+        <a href="{% url 'budgets' %}">
+            ◎ <span>Budgets</span>
+        </a>
+        <a href="{% url 'reports' %}">
+            ▥ <span>Reports</span>
+        </a>
+    </nav>
+
+    <!-- User Account and Logout -->
+    <div class="side-bottom">
+
+        <div class="avatar">
+            {{ user.username|first|upper }}
+        </div>
+
+        <div class="user-info">
+            <b>{{ user.username }}</b>
+            <small>My account</small>
+        </div>
+
+        <form method="post" action="{% url 'logout' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="logout" title="Logout">
+                ↗ Logout
+            </button>
+        </form>
+
+    </div>
+</aside>
+{% endif %}
+
+<!-- Main Content -->
+<main class="{% if user.is_authenticated %}main{% else %}auth-main{% endif %}">
+
+    {% if user.is_authenticated %}
+    <header class="topbar">
+
+        <div>
+            <p class="eyebrow">YOUR MONEY, MADE CLEAR</p>
+            <h1>{% block heading %}Dashboard{% endblock %}</h1>
+        </div>
+
+        <div class="top-actions">
+            <span class="date-chip">
+                {% now "D, d M Y" %}
+            </span>
+
+            <a class="btn" href="{% url 'transaction_add' %}">
+                ＋ Add transaction
+            </a>
+        </div>
+
+    </header>
+    {% endif %}
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Page Content -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer -->
+    <footer>
+        SPENDWISE <span>•</span> Make every rupee count.
+    </footer>
+
+</main>
+
+</body>
+</html>
